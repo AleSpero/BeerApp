@@ -1,7 +1,8 @@
-package com.sperotti.alessandro.beerapp
+package com.sperotti.alessandro.beerapp.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.sperotti.alessandro.beerapp.R
 
 class MainActivity : AppCompatActivity() {
 
