@@ -1,6 +1,8 @@
 package com.sperotti.alessandro.beerapp.di.modules
 
 import com.google.gson.Gson
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.sperotti.alessandro.beerapp.network.PunkEndpoint
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -24,7 +26,18 @@ class NetworkModule(val baseUrl : String) {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideEndpoint(retrofit: Retrofit) : PunkEndpoint{
+        return retrofit.create(PunkEndpoint::class.java)
+    }
+
+
+
+
 
 }
