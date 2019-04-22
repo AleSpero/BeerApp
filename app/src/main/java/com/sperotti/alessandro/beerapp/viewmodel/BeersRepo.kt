@@ -12,10 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BeersRepo {
-
-    @Inject
-    lateinit var punkEndpoint : PunkEndpoint
+class BeersRepo @Inject constructor(val punkEndpoint: PunkEndpoint) {
 
     fun getBeers(page : Int?) : LiveData<List<Beer>>{
         val beerData = MutableLiveData<List<Beer>>()
@@ -27,7 +24,7 @@ class BeersRepo {
                 beerData.value = it
             },
                 {
-                    //TODO handle error
+                    it.printStackTrace()//TODO handle error
                 })
 
         return beerData

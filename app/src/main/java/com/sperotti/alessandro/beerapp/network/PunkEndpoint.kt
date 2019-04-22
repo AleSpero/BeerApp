@@ -10,10 +10,10 @@ import retrofit2.http.Query
 interface PunkEndpoint {
 
     //TODO calls
-    @GET("/beers")
+    @GET("/v2/beers")
     fun getBeers(@Query("page") page : Int): Single<List<Beer>>
 
-    @GET("/beers")
+    @GET("/v2/beers")
     fun getBeersBrewedInterval(
         @Query("brewed_before") before: String,
         @Query("brewed_after") after: String,

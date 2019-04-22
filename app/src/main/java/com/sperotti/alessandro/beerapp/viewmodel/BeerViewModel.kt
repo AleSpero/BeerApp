@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.sperotti.alessandro.beerapp.models.Beer
 import javax.inject.Inject
 
-class BeerViewModel(@Inject public var beersRepo: BeersRepo) : ViewModel() {
+class BeerViewModel
+@Inject constructor(val beersRepo: BeersRepo) : ViewModel() {
 
     lateinit var currentBeers : LiveData<List<Beer>>
 
