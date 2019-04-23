@@ -49,13 +49,18 @@ class HomeFragment : Fragment() {
         val swipeToRefresh = v.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
 
         beerViewModel = ViewModelProviders.of(this, beerViewModelFactory).get(BeerViewModel::class.java)
-        beerViewModel.init()
-
         //recyclerview init
         beerRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        val adapter = BeerAdapter()
+        beerRecyclerView.adapter = adapter
+
+        //Livedata triggerato - cambiamenti di page
         beerViewModel.getBeers().observe(this, Observer {
-            beerRecyclerView.adapter = BeerAdapter(it)
+
+            //aggiornamento pagedlist
+            adapter.submitList(it)
+
             if (swipeToRefresh.isRefreshing) swipeToRefresh.isRefreshing = false
         })
 

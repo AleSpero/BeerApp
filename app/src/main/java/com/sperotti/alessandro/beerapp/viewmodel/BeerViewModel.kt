@@ -2,19 +2,20 @@ package com.sperotti.alessandro.beerapp.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.PagedList
 import com.sperotti.alessandro.beerapp.models.Beer
 import javax.inject.Inject
 
 class BeerViewModel
 @Inject constructor(val beersRepo: BeersRepo) : ViewModel() {
 
-    lateinit var currentBeers : LiveData<List<Beer>>
+    lateinit var currentBeers : LiveData<PagedList<Beer>>
 
-    fun init(){
-        currentBeers = beersRepo.getBeers(1)
+    init{
+        currentBeers = beersRepo.beers
     }
 
-    fun getBeers() : LiveData<List<Beer>>{
+    fun getBeers() : LiveData<PagedList<Beer>>{
         return currentBeers
     }
 
