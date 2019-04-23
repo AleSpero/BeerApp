@@ -34,12 +34,16 @@ class BeerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         val title = itemView.findViewById<TextView>(R.id.title)
         val tagline = itemView.findViewById<TextView>(R.id.tagline)
         val image = itemView.findViewById<ImageView>(R.id.image)
+        val abv = itemView.findViewById<TextView>(R.id.abv)
+        val firstBrewed = itemView.findViewById<TextView>(R.id.first_brewed)
 
         title.text = beer.name
         tagline.text = beer.tagline
+        abv.text = String.format("%s%%", beer.abv)
+        firstBrewed.text = beer.firstBrewed
+
 
         beer.imgUrl?.let {
-
             Glide.with(itemView)
                 .asDrawable()
                 .load(it)

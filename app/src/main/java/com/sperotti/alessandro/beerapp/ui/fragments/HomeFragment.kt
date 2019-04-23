@@ -10,8 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sperotti.alessandro.beerapp.R
+
 import com.sperotti.alessandro.beerapp.di.components.DaggerAppComponent
 import com.sperotti.alessandro.beerapp.di.modules.NetworkModule
 import com.sperotti.alessandro.beerapp.ui.adapters.BeerAdapter
@@ -32,19 +33,20 @@ class HomeFragment : Fragment() {
 
         //TODO sposta?
         DaggerAppComponent.builder()
-            .networkModule(NetworkModule("https://api.punkapi.com/"))
-            .build()
-            .inject(this)
+                .networkModule(NetworkModule("https://api.punkapi.com/"))
+                .build()
+                .inject(this)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
-        val v = inflater.inflate(R.layout.fragment_home, container, false)
+        val v = inflater.inflate(com.sperotti.alessandro.beerapp.R.layout.fragment_home, container, false)
 
         val beerRecyclerView = v.findViewById<RecyclerView>(R.id.beerList)
+        val swipeToRefresh = v.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
 
         beerViewModel = ViewModelProviders.of(this, beerViewModelFactory).get(BeerViewModel::class.java)
         beerViewModel.init()
@@ -54,7 +56,17 @@ class HomeFragment : Fragment() {
 
         beerViewModel.getBeers().observe(this, Observer {
             beerRecyclerView.adapter = BeerAdapter(it)
+            if (swipeToRefresh.isRefreshing) swipeToRefresh.isRefreshing = false
         })
+
+        swipeToRefresh.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light)
+
+        swipeToRefresh.setOnRefreshListener {
+            beerViewModel.getBeers()
+        }
 
         return v
     }

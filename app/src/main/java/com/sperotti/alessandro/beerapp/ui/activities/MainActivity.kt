@@ -14,10 +14,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val fragmentManager = supportFragmentManager
+        if(savedInstanceState == null) {
+            val fragmentManager = supportFragmentManager
 
-        fragmentManager.beginTransaction()
-            .add(R.id.container, HomeFragment())
-            .commit()
+            fragmentManager.beginTransaction()
+                    .add(R.id.container, HomeFragment())
+                    .commit()
+        }
     }
 }

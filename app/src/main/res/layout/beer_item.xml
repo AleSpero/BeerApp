@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_height="wrap_content"
+              android:layout_width="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+android:padding="20dp">
+
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,15 +14,18 @@
     app:cardElevation="8dp">
 
     <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/image"
             android:contentDescription="beerImage"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="100dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -37,8 +47,28 @@
                 android:layout_height="wrap_content"
                 android:text="This is the best beer ever"/>
 
+            <TextView
+                android:id="@+id/abv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tagline"
+                android:layout_marginTop="20dp"
+                android:text="6.0%"
+                android:drawableStart="@drawable/ic_drink"/>
+
+            <TextView
+                android:id="@+id/first_brewed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/abv"
+                android:layout_alignBaseline="@id/abv"
+                android:layout_marginStart="30dp"
+                android:text="04/2007"
+                android:drawableStart="@drawable/ic_date"/>
+
         </RelativeLayout>
 
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
+</LinearLayout>
