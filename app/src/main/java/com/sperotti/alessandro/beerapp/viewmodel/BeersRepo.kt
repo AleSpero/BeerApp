@@ -14,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,16 +23,28 @@ class BeersRepo @Inject constructor(val punkEndpoint: PunkEndpoint) {
 
 
     lateinit var beers : LiveData<PagedList<Beer>>
+    var factory : BeerDataSourceFactory
+
+    val pageConfig = PagedList.Config.Builder()
+        .setPageSize(20)
+        .setInitialLoadSizeHint(20)
+        .build()
 
     init{
-        //Init livedata pagedlist
-        val pageConfig = PagedList.Config.Builder()
-            .setPageSize(20)
-            .setInitialLoadSizeHint(20)
-           // .setEnablePlaceholders(true) //???
-            .build()
+        factory = BeerDataSourceFactory(punkEndpoint)
 
-        beers = LivePagedListBuilder<Int, Beer>(BeerDataSourceFactory(punkEndpoint), pageConfig).build()
+        beers = LivePagedListBuilder<Int, Beer>(factory, pageConfig)
+            .build()
+    }
+
+    fun getWithFilters(from : Date?, to : Date?) {
+
+        factory.from = from
+        factory.to = to
+
+        factory.instance.invalidate()
+        /*beers = LivePagedListBuilder<Int, Beer>(BeerDataSourceFactory(punkEndpoint, from, to), pageConfig)
+            .build()*/
 
     }
 

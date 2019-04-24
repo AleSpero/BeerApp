@@ -14,6 +14,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportActionBar?.elevation = 0f
+
         if(savedInstanceState == null) {
             val fragmentManager = supportFragmentManager
 
