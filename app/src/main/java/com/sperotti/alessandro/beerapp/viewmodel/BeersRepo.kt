@@ -37,14 +37,13 @@ class BeersRepo @Inject constructor(val punkEndpoint: PunkEndpoint) {
             .build()
     }
 
-    fun getWithFilters(from : Date?, to : Date?) {
+    fun getWithFilters(from : Date?, to : Date?, beerName : String?) {
 
         factory.from = from
         factory.to = to
+        factory.beerName = beerName
 
         factory.instance.invalidate()
-        /*beers = LivePagedListBuilder<Int, Beer>(BeerDataSourceFactory(punkEndpoint, from, to), pageConfig)
-            .build()*/
 
     }
 

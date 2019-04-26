@@ -21,6 +21,11 @@ class BeerUtils {
                     else dateFormatPicker.parse(dateString)
         }
 
+        fun getFormattedBeerName(name : String?) : String?{
+            return if(TextUtils.isEmpty(name)) null
+            else name?.toLowerCase()?.replace(" ", "_")
+        }
+
     }
 
 }

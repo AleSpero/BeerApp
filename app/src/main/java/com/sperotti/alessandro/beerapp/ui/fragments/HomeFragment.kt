@@ -51,8 +51,10 @@ class HomeFragment : Fragment() {
 
         val beerRecyclerView = v.findViewById<RecyclerView>(R.id.beerList)
         val searchBtn = v.findViewById<Button>(R.id.search_btn)
+
         val brewedAfter = v.findViewById<TextInputLayout>(R.id.fromDate)
         val brewedBefore = v.findViewById<TextInputLayout>(R.id.toDate)
+        val beerName = v.findViewById<TextInputLayout>(R.id.beer_name)
 
         beerViewModel = ViewModelProviders.of(this, beerViewModelFactory).get(BeerViewModel::class.java)
         //recyclerview init
@@ -68,8 +70,10 @@ class HomeFragment : Fragment() {
         })
 
         searchBtn.setOnClickListener {
-            beerViewModel.getWithFilters(brewedAfter.editText?.text.toString(),
-                brewedBefore.editText?.text.toString())
+            beerViewModel.getWithFilters(
+                brewedAfter.editText?.text.toString(),
+                brewedBefore.editText?.text.toString(),
+                beerName.editText?.text.toString())
         }
 
         return v

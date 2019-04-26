@@ -21,8 +21,11 @@ class BeerViewModel
         return currentBeers
     }
 
-    fun getWithFilters(from : String?, to : String?) {
-        beersRepo.getWithFilters(BeerUtils.getDateFromDatePicker(from),
-            BeerUtils.getDateFromDatePicker(to))
+    fun getWithFilters(from : String?, to : String?, name : String?) {
+        beersRepo.getWithFilters(
+            BeerUtils.getDateFromDatePicker(from),
+            BeerUtils.getDateFromDatePicker(to),
+            BeerUtils.getFormattedBeerName(name)
+            )
     }
 }
