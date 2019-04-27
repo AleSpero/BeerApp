@@ -3,6 +3,7 @@ package com.sperotti.alessandro.beerapp.utils
 import androidx.paging.PageKeyedDataSource
 import com.sperotti.alessandro.beerapp.models.Beer
 import com.sperotti.alessandro.beerapp.network.PunkEndpoint
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -17,12 +18,7 @@ class BeerDataSource @Inject constructor(val punkEndpoint: PunkEndpoint, val fro
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Beer>) {
 
         disposables.add(
-            punkEndpoint.getBeersBrewedInterval(
-                BeerUtils.getFormattedDateForQuery(to),
-                BeerUtils.getFormattedDateForQuery(from),
-                beerSearchName,
-                firstPage,
-                params.requestedLoadSize)
+            getData(firstPage, params.requestedLoadSize)
                 .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -37,12 +33,8 @@ class BeerDataSource @Inject constructor(val punkEndpoint: PunkEndpoint, val fro
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Beer>) {
 
         disposables.add(
-            punkEndpoint.getBeersBrewedInterval(
-                BeerUtils.getFormattedDateForQuery(to),
-                BeerUtils.getFormattedDateForQuery(from),
-                beerSearchName,
-                params.key,
-                params.requestedLoadSize)              .subscribeOn(Schedulers.io())
+           getData(params.key, params.requestedLoadSize)
+                .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 callback.onResult(it, params.key + 1)
@@ -53,6 +45,16 @@ class BeerDataSource @Inject constructor(val punkEndpoint: PunkEndpoint, val fro
         )    }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Beer>) {
+    }
+
+
+    fun getData(startingPage : Int, pageSize : Int) : Single<List<Beer>> {
+       return punkEndpoint.getBeersBrewedInterval(
+            BeerUtils.getFormattedDateForQuery(to),
+            BeerUtils.getFormattedDateForQuery(from),
+            beerSearchName,
+            startingPage,
+            pageSize)
     }
 
 

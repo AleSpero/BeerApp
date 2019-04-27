@@ -1,5 +1,6 @@
 package com.sperotti.alessandro.beerapp.viewmodel
 
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
@@ -12,6 +13,7 @@ class BeerViewModel
 @Inject constructor(val beersRepo: BeersRepo) : ViewModel() {
 
     lateinit var currentBeers : LiveData<PagedList<Beer>>
+    var currentlySelectedBeer : Beer? = null
 
     init{
         currentBeers = beersRepo.beers
@@ -28,4 +30,5 @@ class BeerViewModel
             BeerUtils.getFormattedBeerName(name)
             )
     }
+
 }

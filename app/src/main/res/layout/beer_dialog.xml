@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="20dp">
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+            <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/background_dark"
+                    android:text="Title"/>
+
+            <ImageView
+                    android:id="@+id/image"
+                    android:contentDescription="beerImage"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignBaseline="@id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_height="100dp"/>
+
+            <TextView
+                    android:id="@+id/tagline"
+                    android:layout_below="@id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This is the best beer ever"/>
+
+            <TextView
+                    android:id="@+id/abv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tagline"
+                    android:layout_marginTop="20dp"
+                    android:text="6.0%"
+                    android:drawableStart="@drawable/ic_drink"/>
+
+            <TextView
+                    android:id="@+id/first_brewed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/abv"
+                    android:text="04/2007"
+                    android:drawableStart="@drawable/ic_date"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/first_brewed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
