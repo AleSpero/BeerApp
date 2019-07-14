@@ -25,7 +25,7 @@ class BeerDataSource @Inject constructor(val punkEndpoint: PunkEndpoint, val fro
                 callback.onResult(it, null, firstPage + 1)
             },
                 {
-                    it.printStackTrace()//TODO handle error
+                    it.printStackTrace()
                 })
         )
     }
@@ -40,7 +40,7 @@ class BeerDataSource @Inject constructor(val punkEndpoint: PunkEndpoint, val fro
                 callback.onResult(it, params.key + 1)
             },
                 {
-                    it.printStackTrace()//TODO handle error
+                    it.printStackTrace()
                 })
         )    }
 

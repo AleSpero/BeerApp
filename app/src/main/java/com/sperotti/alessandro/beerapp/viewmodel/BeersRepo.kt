@@ -22,7 +22,7 @@ import javax.inject.Singleton
 class BeersRepo @Inject constructor(val punkEndpoint: PunkEndpoint) {
 
 
-    lateinit var beers : LiveData<PagedList<Beer>>
+    var beers : LiveData<PagedList<Beer>>
     var factory : BeerDataSourceFactory
 
     val pageConfig = PagedList.Config.Builder()

@@ -19,7 +19,6 @@ class Beer (@SerializedName("name") var name : String,
 
         override fun areContentsTheSame(oldItem: Beer, newItem: Beer): Boolean {
             return oldItem.name == newItem.name
-            //TODO aggiungi altri parametri
         }
 
     }

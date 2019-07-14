@@ -12,8 +12,6 @@ import javax.inject.Singleton
 @Module
 class NetworkModule(val baseUrl : String) {
 
-    //"https://api.punkapi.com/v2/"
-
     @Provides
     @Singleton
     fun provideGson() : Gson {

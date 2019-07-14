@@ -7,12 +7,6 @@ import retrofit2.http.Query
 
 interface PunkEndpoint {
 
-    //todo single call?
-
-    @GET("/v2/beers")
-    fun getBeers(@Query("page") page : Int,
-                 @Query("per_page") pageSize : Int): Single<List<Beer>>
-
     @GET("/v2/beers")
     fun getBeersBrewedInterval(
         @Query("brewed_before") before: String?,

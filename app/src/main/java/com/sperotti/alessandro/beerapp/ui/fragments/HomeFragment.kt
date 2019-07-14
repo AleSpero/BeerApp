@@ -71,6 +71,12 @@ class HomeFragment : Fragment() {
         val brewedBefore = v.findViewById<TextInputLayout>(R.id.toDate)
         val beerName = v.findViewById<TextInputLayout>(R.id.beer_name)
 
+        savedInstanceState?.let {
+            brewedAfter.editText?.setText(it.getString("from"))
+            brewedBefore.editText?.setText(it.getString("to"))
+            beerName.editText?.setText(it.getString("search"))
+        }
+
         //recyclerview init
         beerRecyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -102,6 +108,15 @@ class HomeFragment : Fragment() {
 
 
         return v
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        outState.putString("search", beer_name.editText?.text.toString())
+        outState.putString("from", fromDate.editText?.text.toString())
+        outState.putString("to", toDate.editText?.text.toString())
+
+        super.onSaveInstanceState(outState)
     }
 
     fun showBeerDialog(beer : Beer){
