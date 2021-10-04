@@ -5,4 +5,6 @@
     <string name="hint_to">To…</string>
     <string name="search">Search</string>
     <string name="filters">Filters</string>
+    <string name="beers">Beers</string>
+    <string name="no_beers_here">No beers here :/</string>
 </resources>

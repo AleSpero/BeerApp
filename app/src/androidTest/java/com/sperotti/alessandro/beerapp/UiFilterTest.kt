@@ -25,8 +25,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import com.sperotti.alessandro.beerapp.models.Beer
 import com.sperotti.alessandro.beerapp.ui.adapters.BeerViewHolder
 import kotlinx.android.synthetic.main.fragment_home.*
-import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.anyOf
+import org.hamcrest.CoreMatchers.*
 import org.junit.Before
 
 
@@ -39,10 +38,10 @@ class UiFilterTest {
         @Test
         fun testWithFilters() {
 
-            onEditTextWithinTilWithId(R.id.fromDate).perform(typeText("16/10/2010"))
-            onEditTextWithinTilWithId(R.id.toDate).perform(typeText("16/10/2015"), closeSoftKeyboard())
+            onEditTextWithinTilWithId(R.id.beer_name).perform(typeText("punk"))
 
             onView(withId(R.id.search_btn)).perform(click())
+            hideKeyboard()
 
             Thread.sleep(2000L)
 
@@ -56,17 +55,8 @@ class UiFilterTest {
 
                 Thread.sleep(500)
 
-                onView(withId(R.id.first_brewed))
-                    .check(matches(
-                        anyOf(
-                        withSubstring("2010"),
-                        withSubstring("2011"),
-                        withSubstring("2012"),
-                        withSubstring("2013"),
-                        withSubstring("2014"),
-                        withSubstring("2015")
-                    )
-                    ))
+                onView(withId(R.id.title))
+                    .check(matches(withText(containsString("punk"))))
 
                 onView(withText("OK")).perform(pressBack())
 
@@ -78,5 +68,9 @@ class UiFilterTest {
         fun onEditTextWithinTilWithId(@IdRes textInputLayoutId: Int): ViewInteraction {
             return onView(allOf(isDescendantOfA(withId(textInputLayoutId)), isAssignableFrom(EditText::class.java)))
         }
+
+    fun hideKeyboard() {
+        onView(ViewMatchers.isRoot()).perform(ViewActions.closeSoftKeyboard())
+    }
 
 }

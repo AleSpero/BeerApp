@@ -1,44 +1,42 @@
 package com.sperotti.alessandro.beerapp.ui.adapters
 
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
-import com.google.android.material.card.MaterialCardView
 import com.sperotti.alessandro.beerapp.R
 import com.sperotti.alessandro.beerapp.models.Beer
+import kotlinx.android.synthetic.main.beer_item.view.*
 
-class BeerAdapter : PagedListAdapter<Beer, BeerViewHolder>(Beer.DiffUtility()){
+class BeerAdapter(val beers : MutableList<Beer>, val onClick : (Beer) -> Unit) : RecyclerView.Adapter<BeerViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeerViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.beer_item, parent, false)
-        return BeerViewHolder(v)
+        return BeerViewHolder(v, onClick)
     }
 
     override fun onBindViewHolder(holder: BeerViewHolder, position: Int) {
-       holder.bindBeer(getItem(position)!!)
+        holder.bindBeer(beers[position])
     }
 
-    fun getItemAtPosition(position : Int) : Beer{
-       return getItem(position)!!
+    override fun getItemCount(): Int = beers.size
+
+    fun addItems(additionalBeers : List<Beer>){
+        beers.addAll(additionalBeers)
+        notifyDataSetChanged()
+    }
+
+    fun clear(){
+        beers.clear()
     }
 
 }
 
-class BeerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+class BeerViewHolder(itemView : View, val onClick : (Beer) -> Unit) : RecyclerView.ViewHolder(itemView){
 
     val requestOptions = RequestOptions()
 
@@ -56,6 +54,10 @@ class BeerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         firstBrewed.text = beer.firstBrewed
 
         requestOptions.placeholder(R.drawable.ic_drink)
+
+        itemView.card_view.setOnClickListener {
+            onClick(beer)
+        }
 
         beer.imgUrl?.let {
             Glide.with(itemView)

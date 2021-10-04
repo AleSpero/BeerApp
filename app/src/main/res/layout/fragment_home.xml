@@ -1,129 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-                tools:context=".ui.fragments.HomeFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.HomeFragment">
 
-    <LinearLayout
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:id="@+id/toolbar"
-            android:background="@color/colorPrimary"
-            android:elevation="8dp"
-            app:title="@string/app_name"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="20dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:gravity="center_horizontal">
+            android:orientation="vertical">
 
-        <com.google.android.material.card.MaterialCardView
 
+            <RelativeLayout
+                android:id="@+id/filter_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="8dp">
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_marginBottom="16dp"
+                android:padding="10dp">
 
-        <RelativeLayout android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:padding="10dp">
+                <TextView
+                    android:id="@+id/filtertxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/filters"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp" />
 
-        <TextView
-                android:id="@+id/filtertxt"
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/beer_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/filtertxt">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_search"
+                        android:drawablePadding="5dp"
+                        android:hint="@string/search_hint" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/search_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_below="@id/beer_name"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/search"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@android:color/white"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/beer_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:text="@string/filters"
-                android:textSize="18sp"
+                android:layout_marginStart="15dp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/colorPrimary"/>
+                android:text="@string/beers"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/beer_name"
-                    android:layout_below="@id/filtertxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:drawableStart="@drawable/ic_search"
-                        android:drawablePadding="5dp"
-                        android:hint="@string/search_hint"
-                        android:layout_height="wrap_content"/>
-
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-                android:layout_below="@id/beer_name"
-                android:id="@+id/date_layout"
-                android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/beerList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-               android:orientation="horizontal">
+                tools:listitem="@layout/beer_item" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/fromDate"
-                    android:layout_width="160dp"
-                    android:layout_marginEnd="10dp"
+            <LinearLayout
+                android:id="@+id/loading_overlay"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:layout_marginTop="100dp"
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/error_overlay"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/error_message"
+                    android:layout_marginTop="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:textSize="32sp"
+                    android:text="@string/no_beers_here"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:drawableStart="@drawable/ic_date"
-                        android:drawablePadding="5dp"
-                        android:hint="@string/from_hint"
-                        android:layout_height="wrap_content"/>
-
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/toDate"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:drawableStart="@drawable/ic_date"
-                        android:drawablePadding="5dp"
-                        android:hint="@string/hint_to"
-                        android:layout_height="wrap_content"/>
-
-
-            </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
-            <Button
-                    android:id="@+id/search_btn"
-                    android:layout_below="@id/date_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorPrimaryDark"
-                    android:textColor="@android:color/white"
-                    android:text="@string/search"/>
-
-        </RelativeLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-                xmlns:tools="http://schemas.android.com/tools"
-                tools:listitem="@layout/beer_item"
-                android:layout_below="@id/toolbar"
-            android:id="@+id/beerList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

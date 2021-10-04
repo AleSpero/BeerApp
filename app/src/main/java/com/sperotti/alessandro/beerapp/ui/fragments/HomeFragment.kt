@@ -1,128 +1,140 @@
 package com.sperotti.alessandro.beerapp.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
-import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout.END_ICON_CLEAR_TEXT
 import com.sperotti.alessandro.beerapp.R
-
-import com.sperotti.alessandro.beerapp.di.components.DaggerAppComponent
-import com.sperotti.alessandro.beerapp.di.modules.NetworkModule
 import com.sperotti.alessandro.beerapp.models.Beer
 import com.sperotti.alessandro.beerapp.ui.adapters.BeerAdapter
+import com.sperotti.alessandro.beerapp.utils.LoadingState
+import com.sperotti.alessandro.beerapp.utils.RecyclerViewPaginator
 import com.sperotti.alessandro.beerapp.viewmodel.BeerViewModel
-import com.sperotti.alessandro.beerapp.viewmodel.BeerViewModelFactory
-import github.nisrulz.recyclerviewhelper.RVHItemClickListener
-import github.nisrulz.recyclerviewhelper.RVHItemDividerDecoration
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
-import java.text.SimpleDateFormat
-import java.util.*
-import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    @Inject
-    lateinit var beerViewModelFactory: BeerViewModelFactory
-    lateinit var beerViewModel: BeerViewModel
+    val viewModel: BeerViewModel by viewModels()
+    val beerAdapter: BeerAdapter by lazy {
+        BeerAdapter(mutableListOf()) {
+            showBeerDialog(it)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DaggerAppComponent.builder()
-            .networkModule(NetworkModule("https://api.punkapi.com/"))
-            .build()
-            .inject(this)
-
-        beerViewModel = ViewModelProviders.of(this, beerViewModelFactory).get(BeerViewModel::class.java)
-
         savedInstanceState?.let {
-            beerViewModel.currentlySelectedBeer?.let {
+            viewModel.currentlySelectedBeer?.let {
                 showBeerDialog(it)
             }
         }
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val v = inflater.inflate(com.sperotti.alessandro.beerapp.R.layout.fragment_home, container, false)
 
-        val beerRecyclerView = v.findViewById<RecyclerView>(R.id.beerList)
-        val searchBtn = v.findViewById<Button>(R.id.search_btn)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val brewedAfter = v.findViewById<TextInputLayout>(R.id.fromDate)
-        val brewedBefore = v.findViewById<TextInputLayout>(R.id.toDate)
-        val beerName = v.findViewById<TextInputLayout>(R.id.beer_name)
+        setupRecyclerView()
+        observeLoadingState()
 
-        savedInstanceState?.let {
-            brewedAfter.editText?.setText(it.getString("from"))
-            brewedBefore.editText?.setText(it.getString("to"))
-            beerName.editText?.setText(it.getString("search"))
+        beer_name.endIconMode = END_ICON_CLEAR_TEXT
+        beer_name.setEndIconOnClickListener {
+            lifecycleScope.launch {
+                viewModel.loadingState.emit(LoadingState.Loading())
+            }
+            beer_name.editText?.text?.clear()
+            fetchBeers(
+                page = 1,
+                beerQuery = null,
+                needsClear = true
+            )
         }
 
-        //recyclerview init
-        beerRecyclerView.layoutManager = LinearLayoutManager(context)
+        fetchBeers(
+            page = 1,
+            beerQuery = beer_name.editText?.text?.toString()?.takeIf { it.isNotEmpty() })
 
-        val adapter = BeerAdapter()
-        beerRecyclerView.adapter = adapter
+        search_btn.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.loadingState.emit(LoadingState.Loading())
+            }
+            fetchBeers(
+                page = 1,
+                beerQuery = beer_name.editText?.text?.toString()?.takeIf { it.isNotEmpty() },
+                needsClear = true
+            )
+        }
+    }
 
-        //Livedata triggerato - cambiamenti di page
-        beerViewModel.getBeers().observe(this, Observer {
-            //aggiornamento pagedlist
-            adapter.submitList(it)
+    fun setupRecyclerView() {
+        beerList.layoutManager = LinearLayoutManager(context)
+
+        beerList.addOnScrollListener(object :
+            RecyclerViewPaginator(beerList.layoutManager as LinearLayoutManager) {
+            override fun loadMore(page: Int, length: Int) {
+                fetchBeers(
+                    page = page,
+                    pageSize = length,
+                    beerQuery = beer_name.editText?.text?.toString()?.takeIf { it.isNotEmpty() })
+            }
         })
 
-        beerRecyclerView.addOnItemTouchListener(RVHItemClickListener(context,
-            RVHItemClickListener.OnItemClickListener { view, position ->
+        beerList.adapter = beerAdapter
+    }
 
-                val beer = adapter.getItemAtPosition(position)
-                beerViewModel.currentlySelectedBeer = beer
-                showBeerDialog(beer)
-            }
-        ))
-
-        searchBtn.setOnClickListener {
-            beerViewModel.getWithFilters(
-                brewedAfter.editText?.text.toString(),
-                brewedBefore.editText?.text.toString(),
-                beerName.editText?.text.toString())
+    fun fetchBeers(
+        page: Int,
+        pageSize: Int = RecyclerViewPaginator.PAGE_SIZE,
+        beerQuery: String?,
+        needsClear: Boolean = false
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getBeers(page, pageSize, beerQuery)
+                .collect { fetchedBeers ->
+                    if (fetchedBeers.isEmpty() && beerAdapter.beers.isEmpty()) {
+                        viewModel.loadingState.emit(LoadingState.Error(null))
+                    } else {
+                        viewModel.loadingState.emit(LoadingState.Idle())
+                        if (needsClear)
+                            beerAdapter.clear()
+                        beerAdapter.addItems(fetchedBeers)
+                    }
+                }
         }
-
-
-
-        return v
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-
         outState.putString("search", beer_name.editText?.text.toString())
-        outState.putString("from", fromDate.editText?.text.toString())
-        outState.putString("to", toDate.editText?.text.toString())
-
         super.onSaveInstanceState(outState)
     }
 
-    fun showBeerDialog(beer : Beer){
+    fun showBeerDialog(beer: Beer) {
 
         val beerView = LayoutInflater.from(requireContext()).inflate(R.layout.beer_dialog, null)
-
         val title = beerView.findViewById<TextView>(R.id.title)
         val tagline = beerView.findViewById<TextView>(R.id.tagline)
         val image = beerView.findViewById<ImageView>(R.id.image)
@@ -140,20 +152,31 @@ class HomeFragment : Fragment() {
 
         beer.imgUrl?.let {
             Glide.with(this)
-                    .asDrawable()
-                    .load(it)
-                    .into(image!!)
+                .asDrawable()
+                .load(it)
+                .into(image!!)
 
         }
 
-        val beerDialog =  AlertDialog.Builder(requireContext())
+        val beerDialog = MaterialAlertDialogBuilder(requireContext())
             .setView(beerView)
-            .setNeutralButton(android.R.string.ok) { dialog, int ->
-                beerViewModel.currentlySelectedBeer = null
+            .setNeutralButton(android.R.string.ok) { dialog, _ ->
+                viewModel.currentlySelectedBeer = null
                 dialog.dismiss()
             }.create()
 
         beerDialog.show()
+
+    }
+
+    fun observeLoadingState() {
+        lifecycleScope.launch(context = Dispatchers.Main) {
+            viewModel.loadingState.collectLatest {
+                beerList.isVisible = it is LoadingState.Idle
+                loading_overlay.isVisible = it is LoadingState.Loading
+                error_overlay.isVisible = it is LoadingState.Error
+            }
+        }
 
     }
 
