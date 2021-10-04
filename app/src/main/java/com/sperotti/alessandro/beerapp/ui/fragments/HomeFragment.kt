@@ -1,6 +1,8 @@
 package com.sperotti.alessandro.beerapp.ui.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.SpannedString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +36,7 @@ class HomeFragment : Fragment() {
     val viewModel: BeerViewModel by viewModels()
     val beerAdapter: BeerAdapter by lazy {
         BeerAdapter(mutableListOf()) {
+            viewModel.currentlySelectedBeer = it
             showBeerDialog(it)
         }
     }
@@ -45,6 +48,14 @@ class HomeFragment : Fragment() {
             viewModel.currentlySelectedBeer?.let {
                 showBeerDialog(it)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.searchQuery?.let {
+            beer_name.editText?.text = Editable.Factory.getInstance().newEditable(it)
+
         }
     }
 
@@ -128,7 +139,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("search", beer_name.editText?.text.toString())
+        viewModel.searchQuery = beer_name.editText?.text.toString()
         super.onSaveInstanceState(outState)
     }
 
